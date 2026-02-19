@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Library Management System</h1>
+    </header>
+
+    <main>
+        <!-- Add New Book -->
+        <section class="card">
+            <h2>Add New Book</h2>
+            <form id="add-book-form">
+                <input type="text" id="title" placeholder="Book Title" required>
+                <input type="text" id="author" placeholder="Author" required>
+                <input type="text" id="isbn" placeholder="ISBN" required>
+                <button type="submit">Add Book</button>
+            </form>
+            <p class="message" id="add-book-message"></p>
+        </section>
+
+        <!-- All Books -->
+        <section class="card">
+            <h2>All Books</h2>
+            <ul id="book-list"></ul>
+        </section>
+
+        <!-- Add New User -->
+        <section class="card">
+            <h2>Add New User</h2>
+            <form id="add-user-form">
+                <input type="text" id="user-name" placeholder="Name" required>
+                <input type="email" id="user-email" placeholder="Email" required>
+                <button type="submit">Add User</button>
+            </form>
+            <p class="message" id="add-user-message"></p>
+        </section>
+
+        <!-- All Users -->
+        <section class="card">
+            <h2>All Users</h2>
+            <ul id="user-list"></ul>
+        </section>
+
+        <!-- Borrow Book -->
+        <section class="card">
+            <h2>Borrow a Book</h2>
+            <form id="borrow-book-form">
+                <select id="borrow-user" required></select>
+                <select id="borrow-book" required></select>
+                <button type="submit">Borrow</button>
+            </form>
+            <p class="message" id="borrow-book-message"></p>
+        </section>
+
+        <!-- Borrowed Books -->
+        <section class="card">
+            <h2>Borrowed Books</h2>
+            <ul id="borrowed-books-list"></ul>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
