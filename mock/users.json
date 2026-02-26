@@ -1,0 +1,16 @@
+[
+  { "name": "John Smith", "email": "john@example.com", "age": 25 },
+
+  { "name": "", "email": "emptyname@example.com", "age": 22 },
+  { "name": "A", "email": "shortname@example.com", "age": 22 },
+
+  { "name": "TooLongNameeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "email": "toolong@example.com", "age": 30 },
+
+  { "name": "Anna", "email": "invalid-email", "age": 28 },
+  { "name": "Bob", "email": "bob@example.com", "age": -5 },
+  { "name": "Clara", "email": "clara@example.com", "age": 150 },
+
+  { "name": "   Mike   ", "email": "   mike@example.com   ", "age": 35 },
+  { "name": "Duplicate", "email": "john@example.com", "age": 40 }
+]
