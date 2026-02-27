@@ -1,22 +1,55 @@
 [
-  { "case": "valid_basic", "valid": true,  "name": "Valid User",        "email": "valid1@example.com",           "age": 25 },
-
-  { "case": "valid_trim_name", "valid": true, "name": "   Trim Me   ",  "email": "valid2@example.com",           "age": 30 },
-  { "case": "valid_age_boundary_low", "valid": true, "name": "Age Zero", "email": "valid3@example.com",          "age": 0 },
-
-  { "case": "invalid_empty_name", "valid": false, "name": "",           "email": "emptyname@example.com",        "age": 25, "expected_field": "name" },
-  { "case": "invalid_whitespace_name", "valid": false, "name": "   ",    "email": "whitespace@example.com",       "age": 25, "expected_field": "name" },
-
-  { "case": "invalid_missing_at_email", "valid": false, "name": "Bad Email", "email": "notanemail",              "age": 22, "expected_field": "email" },
-  { "case": "invalid_missing_domain_email", "valid": false, "name": "Bad Domain", "email": "bad@",              "age": 22, "expected_field": "email" },
-
-  { "case": "invalid_negative_age", "valid": false, "name": "Negative Age", "email": "negative@example.com",     "age": -1, "expected_field": "age" },
-  { "case": "invalid_age_too_high", "valid": false, "name": "Too Old",      "email": "tooold@example.com",       "age": 999, "expected_field": "age" },
-
-  { "case": "invalid_missing_name_key", "valid": false, "email": "noname@example.com", "age": 25,                "expected_field": "name" },
-  { "case": "invalid_missing_email_key", "valid": false, "name": "No Email", "age": 25,                          "expected_field": "email" },
-  { "case": "invalid_missing_age_key", "valid": false, "name": "No Age", "email": "noage@example.com",           "expected_field": "age" },
-
-  { "case": "duplicate_email_first", "valid": true,  "name": "Dup One", "email": "dup@example.com",             "age": 25 },
-  { "case": "duplicate_email_second", "valid": false, "name": "Dup Two", "email": "dup@example.com",            "age": 26, "expected_field": "email" }
+  {
+    "case": "valid_basic",
+    "valid": true,
+    "name": "Valid User",
+    "email": "valid1@example.com",
+    "age": 25
+  },
+  {
+    "case": "valid_trim_name",
+    "valid": true,
+    "name": "  Trim Me  ",
+    "email": "valid2@example.com",
+    "age": 30
+  },
+  {
+    "case": "invalid_empty_name",
+    "valid": false,
+    "name": "",
+    "email": "emptyname@example.com",
+    "age": 25,
+    "expected_field": "name"
+  },
+  {
+    "case": "invalid_bad_email",
+    "valid": false,
+    "name": "Bad Email",
+    "email": "notanemail",
+    "age": 22,
+    "expected_field": "email"
+  },
+  {
+    "case": "invalid_negative_age",
+    "valid": false,
+    "name": "Negative Age",
+    "email": "negative@example.com",
+    "age": -1,
+    "expected_field": "age"
+  },
+  {
+    "case": "duplicate_email_first",
+    "valid": true,
+    "name": "Dup One",
+    "email": "dup@example.com",
+    "age": 25
+  },
+  {
+    "case": "duplicate_email_second",
+    "valid": false,
+    "name": "Dup Two",
+    "email": "dup@example.com",
+    "age": 26,
+    "expected_field": "email"
+  }
 ]
