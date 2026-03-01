@@ -16,7 +16,7 @@ def validate_user(data):
 
     # name: 2–50 characters
     if len(name) < 2 or len(name) > 50:
-        errors.append({"field": "name", "message": "Name must be 2–50 characters."})
+        errors.append({"field": "name", "message": "Name must be 2-50 characters."})
 
     # email: simple format check
     if not EMAIL_RE.match(email):
