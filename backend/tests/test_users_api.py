@@ -51,3 +51,28 @@ def test_create_user_duplicate_email(client):
     assert res2.status_code == 400
     data = res2.get_json()
     assert data["errors"][0]["field"] == "email"
+
+import json
+import os
+
+def test_dataset_driven_negative_cases(client):
+    # Load dataset
+    dataset_path = os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "mock",
+        "users.json"
+    )
+
+    with open(dataset_path) as f:
+        users = json.load(f)
+
+    for user in users:
+        if not user.get("valid", True):
+            res = client.post("/api/users/", json=user)
+
+            assert res.status_code == 400
+            data = res.get_json()
+
+            assert "errors" in data
+            assert len(data["errors"]) >= 1
