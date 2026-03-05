@@ -55,6 +55,14 @@ def test_create_user_duplicate_email(client):
 import json
 import os
 
+def _payload(u: dict) -> dict:
+    """Strip dataset metadata keys so API only receives expected fields."""
+    return {
+        "name": u.get("name"),
+        "email": u.get("email"),
+        "age": u.get("age"),
+    }
+
 def test_dataset_driven_negative_cases(client):
     # Load dataset
     dataset_path = os.path.join(
@@ -67,12 +75,36 @@ def test_dataset_driven_negative_cases(client):
     with open(dataset_path) as f:
         users = json.load(f)
 
-    for user in users:
-        if not user.get("valid", True):
-            res = client.post("/api/users/", json=user)
+    # Index dataset by "case" if present (helps for duplicates)
+    by_case = {u.get("case"): u for u in users if isinstance(u, dict) and u.get("case")}
 
+    for u in users:
+        if u.get("valid", True):
+            continue
+
+        # Special handling: duplicate email requires seeding the "first" user
+        if u.get("case") == "duplicate_email_second":
+            first = by_case.get("duplicate_email_first")
+
+            # If the dataset has the first record, create it first
+            if first:
+                res_seed = client.post("/api/users/", json=_payload(first))
+                assert res_seed.status_code == 201
+
+            # Now post the duplicate record (should fail)
+            res = client.post("/api/users/", json=_payload(u))
             assert res.status_code == 400
-            data = res.get_json()
 
+            data = res.get_json()
             assert "errors" in data
             assert len(data["errors"]) >= 1
+            assert data["errors"][0]["field"] == "email"
+            continue
+
+        # Normal invalid cases
+        res = client.post("/api/users/", json=_payload(u))
+        assert res.status_code == 400
+
+        data = res.get_json()
+        assert "errors" in data
+        assert len(data["errors"]) >= 1
