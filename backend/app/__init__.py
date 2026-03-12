@@ -42,10 +42,10 @@ def create_app(test_config=None):
     def log_request(response):
         app.logger.info(
         "%s %s %s",
-        response.status_code,
-        response.request.method,
-        response.request.path,
-    )
+        request.method,
+        request.path,
+        response.status_code
+        )
         return response
 
     return app
