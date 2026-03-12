@@ -40,7 +40,6 @@ def create_app(test_config=None):
 
     @app.after_request
     def log_request(response):
-        from flask import request
         app.logger.info(
             "%s %s %s",
             request.method,
