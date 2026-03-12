@@ -23,6 +23,13 @@ jobs:
           python3 -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Smoke test /healthz
+        run: |
+          cd backend
+          python run.py &
+          sleep 5
+          curl -f http://127.0.0.1:5000/healthz
+
       - name: Run pytest
         run: |
           cd backend
