@@ -40,12 +40,13 @@ def create_app(test_config=None):
 
     @app.after_request
     def log_request(response):
+        from flask import request
         app.logger.info(
-        "%s %s %s",
-        request.method,
-        request.path,
-        response.status_code
-        )
+            "%s %s %s",
+            request.method,
+            request.path,
+            response.status_code
+    )
         return response
 
     return app
