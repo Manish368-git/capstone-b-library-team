@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS  # ✅ Import CORS
 from datetime import datetime
@@ -41,10 +41,10 @@ def create_app(test_config=None):
     @app.after_request
     def log_request(response):
         app.logger.info(
-        "%s %s %s",
-        response.status_code,
-        response.request.method,
-        response.request.path,
+            "%s %s %s",
+            request.method,
+            request.path,
+            response.status_code
     )
         return response
 
