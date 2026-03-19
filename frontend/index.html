@@ -1,70 +1,428 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Management System</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Codex — Library Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <header>
-        <h1>Library Management System</h1>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 32 32" fill="none">
+          <rect x="4" y="4" width="6" height="24" rx="1.5" fill="currentColor" opacity="0.9"/>
+          <rect x="12" y="7" width="6" height="21" rx="1.5" fill="currentColor" opacity="0.7"/>
+          <rect x="20" y="4" width="8" height="24" rx="1.5" fill="currentColor" opacity="0.5"/>
+        </svg>
+      </div>
+      <div>
+        <span class="logo-title">Codex</span>
+        <span class="logo-sub">Library Management System</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item active" data-section="dashboard" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" data-section="books" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Books
+        <span class="nav-badge" id="nav-badge-books"></span>
+      </a>
+      <a class="nav-item" data-section="members" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Members
+        <span class="nav-badge" id="nav-badge-members"></span>
+      </a>
+      <a class="nav-item" data-section="borrowing" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        Borrowing
+      </a>
+      <a class="nav-item" data-section="records" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Records
+        <span class="nav-badge nav-badge-red" id="nav-badge-overdue"></span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-info">
+        <span class="status-dot"></span>
+        System Online
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-wrapper">
+
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle Menu">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="breadcrumb" id="breadcrumb">Dashboard</div>
+      </div>
+      <div class="topbar-right">
+        <div class="search-bar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="global-search" placeholder="Search books, members…" />
+        </div>
+        <div class="topbar-avatar">LM</div>
+      </div>
     </header>
 
-    <main>
-        <!-- Add New Book -->
-        <section class="card">
-            <h2>Add New Book</h2>
-            <form id="add-book-form">
-                <input type="text" id="title" placeholder="Book Title" required>
-                <input type="text" id="author" placeholder="Author" required>
-                <input type="text" id="isbn" placeholder="ISBN" required>
-                <button type="submit">Add Book</button>
+    <main class="content">
+
+      <!-- ===== DASHBOARD ===== -->
+      <section class="page active" id="page-dashboard">
+        <div class="page-header">
+          <h1 class="page-title">Good day, Librarian 👋</h1>
+          <p class="page-subtitle">Here's what's happening in Codex today.</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon books-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <div class="stat-body">
+              <span class="stat-label">Total Books</span>
+              <span class="stat-value" id="dash-total-books">—</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon avail-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="stat-body">
+              <span class="stat-label">Available</span>
+              <span class="stat-value" id="dash-available-books">—</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon members-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </div>
+            <div class="stat-body">
+              <span class="stat-label">Members</span>
+              <span class="stat-value" id="dash-total-members">—</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon borrow-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            </div>
+            <div class="stat-body">
+              <span class="stat-label">On Loan</span>
+              <span class="stat-value" id="dash-borrowed">—</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon overdue-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <div class="stat-body">
+              <span class="stat-label">Overdue</span>
+              <span class="stat-value" id="dash-overdue">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-bottom">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Recent Activity</h3>
+            </div>
+            <ul class="activity-list" id="activity-list">
+              <li class="activity-empty">No recent activity yet.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Quick Actions</h3>
+            </div>
+            <div class="quick-actions">
+              <button class="quick-btn" data-goto="books">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Book
+              </button>
+              <button class="quick-btn" data-goto="members">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Member
+              </button>
+              <button class="quick-btn" data-goto="borrowing">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+                Issue Book
+              </button>
+              <button class="quick-btn" data-goto="records">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                View Records
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== BOOKS ===== -->
+      <section class="page" id="page-books">
+        <div class="page-header">
+          <h1 class="page-title">Books</h1>
+          <p class="page-subtitle">Manage the Codex book collection.</p>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Add New Book</h3>
+            </div>
+            <form id="add-book-form" class="form-stack" novalidate>
+              <div class="form-group">
+                <label for="title">Book Title</label>
+                <input type="text" id="title" placeholder="e.g. The Great Gatsby" />
+                <span class="field-error" id="err-title"></span>
+              </div>
+              <div class="form-group">
+                <label for="author">Author</label>
+                <input type="text" id="author" placeholder="e.g. F. Scott Fitzgerald" />
+                <span class="field-error" id="err-author"></span>
+              </div>
+              <div class="form-group">
+                <label for="isbn">ISBN</label>
+                <input type="text" id="isbn" placeholder="e.g. 978-3-16-148410-0" />
+                <span class="field-error" id="err-isbn"></span>
+              </div>
+              <button type="submit" class="btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Book
+              </button>
             </form>
-            <p class="message" id="add-book-message"></p>
-        </section>
+          </div>
+          <div class="card flex-card">
+            <div class="card-header">
+              <h3 class="card-title">Collection</h3>
+              <div class="search-inline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="book-search" placeholder="Filter books…" />
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table" id="book-table">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>ISBN</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="book-list"></tbody>
+              </table>
+              <div class="empty-state hidden" id="book-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                <p>No books found.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <!-- All Books -->
-        <section class="card">
-            <h2>All Books</h2>
-            <ul id="book-list"></ul>
-        </section>
-
-        <!-- Add New User -->
-        <section class="card">
-            <h2>Add New User</h2>
-            <form id="add-user-form">
-                <input type="text" id="user-name" placeholder="Name" required>
-                <input type="email" id="user-email" placeholder="Email" required>
-                <button type="submit">Add User</button>
+      <!-- ===== MEMBERS ===== -->
+      <section class="page" id="page-members">
+        <div class="page-header">
+          <h1 class="page-title">Members</h1>
+          <p class="page-subtitle">Manage registered Codex library members.</p>
+        </div>
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Add New Member</h3>
+            </div>
+            <form id="add-user-form" class="form-stack" novalidate>
+              <div class="form-group">
+                <label for="user-name">Full Name</label>
+                <input type="text" id="user-name" placeholder="e.g. Jane Smith" />
+                <span class="field-error" id="err-user-name"></span>
+              </div>
+              <div class="form-group">
+                <label for="user-email">Email Address</label>
+                <input type="email" id="user-email" placeholder="e.g. jane@email.com" />
+                <span class="field-error" id="err-user-email"></span>
+              </div>
+              <button type="submit" class="btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Member
+              </button>
             </form>
-            <p class="message" id="add-user-message"></p>
-        </section>
+          </div>
+          <div class="card flex-card">
+            <div class="card-header">
+              <h3 class="card-title">All Members</h3>
+              <div class="search-inline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="member-search" placeholder="Filter members…" />
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table" id="user-table">
+                <thead>
+                  <tr>
+                    <th>Member</th>
+                    <th>Email</th>
+                    <th>ID</th>
+                  </tr>
+                </thead>
+                <tbody id="user-list"></tbody>
+              </table>
+              <div class="empty-state hidden" id="member-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                <p>No members found.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <!-- All Users -->
-        <section class="card">
-            <h2>All Users</h2>
-            <ul id="user-list"></ul>
-        </section>
-
-        <!-- Borrow Book -->
-        <section class="card">
-            <h2>Borrow a Book</h2>
-            <form id="borrow-book-form">
-                <select id="borrow-user" required></select>
-                <select id="borrow-book" required></select>
-                <button type="submit">Borrow</button>
+      <!-- ===== BORROWING ===== -->
+      <section class="page" id="page-borrowing">
+        <div class="page-header">
+          <h1 class="page-title">Borrow a Book</h1>
+          <p class="page-subtitle">Issue a book to a registered member.</p>
+        </div>
+        <div class="borrow-layout">
+          <div class="card borrow-form-card">
+            <div class="card-header">
+              <h3 class="card-title">Issue Book</h3>
+              <span class="loan-period-badge">14-day loan period</span>
+            </div>
+            <form id="borrow-book-form" class="form-stack" novalidate>
+              <div class="form-group">
+                <label for="borrow-user">Select Member</label>
+                <div class="select-wrap">
+                  <select id="borrow-user">
+                    <option value="" disabled selected>Select a member…</option>
+                  </select>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+                <span class="field-error" id="err-borrow-user"></span>
+              </div>
+              <div class="form-group">
+                <label for="borrow-book">Select Book</label>
+                <div class="select-wrap">
+                  <select id="borrow-book">
+                    <option value="" disabled selected>Select a book…</option>
+                  </select>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+                <span class="field-error" id="err-borrow-book"></span>
+              </div>
+              <div class="due-date-preview">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Due back by: <strong id="due-date-text">—</strong>
+              </div>
+              <button type="submit" class="btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+                Issue Book
+              </button>
             </form>
-            <p class="message" id="borrow-book-message"></p>
-        </section>
+          </div>
+        </div>
+      </section>
 
-        <!-- Borrowed Books -->
-        <section class="card">
-            <h2>Borrowed Books</h2>
-            <ul id="borrowed-books-list"></ul>
-        </section>
+      <!-- ===== RECORDS ===== -->
+      <section class="page" id="page-records">
+        <div class="page-header">
+          <h1 class="page-title">Borrow Records</h1>
+          <p class="page-subtitle">All borrowing history and active loans.</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">All Records</h3>
+            <div class="card-header-right">
+              <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all">All</button>
+                <button class="filter-tab" data-filter="active">Active</button>
+                <button class="filter-tab" data-filter="overdue">Overdue</button>
+                <button class="filter-tab" data-filter="returned">Returned</button>
+              </div>
+              <button class="btn-export" id="btn-export-csv">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export CSV
+              </button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table" id="borrow-table">
+              <thead>
+                <tr>
+                  <th>Member</th>
+                  <th>Book</th>
+                  <th>Borrowed</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="borrowed-books-list"></tbody>
+            </table>
+            <div class="empty-state hidden" id="records-empty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <p>No borrow records yet.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
 
-    <script src="script.js"></script>
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="footer-logo-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <rect x="4" y="4" width="6" height="24" rx="1.5" fill="currentColor" opacity="0.9"/>
+              <rect x="12" y="7" width="6" height="21" rx="1.5" fill="currentColor" opacity="0.7"/>
+              <rect x="20" y="4" width="8" height="24" rx="1.5" fill="currentColor" opacity="0.5"/>
+            </svg>
+          </div>
+          <span class="footer-name">Codex</span>
+        </div>
+        <span class="footer-copy">© 2026 Codex Library Management System. All rights reserved.</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Return Confirmation Modal -->
+  <div class="modal-overlay hidden" id="return-modal">
+    <div class="modal">
+      <div class="modal-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+      </div>
+      <h3 class="modal-title">Return Book?</h3>
+      <p class="modal-msg" id="modal-msg">Are you sure you want to mark this book as returned?</p>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" id="modal-cancel">Cancel</button>
+        <button class="btn-modal-confirm" id="modal-confirm">Yes, Return</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Loading -->
+  <div class="loading-overlay hidden" id="loading-overlay">
+    <div class="spinner"></div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
