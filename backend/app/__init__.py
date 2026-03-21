@@ -25,10 +25,12 @@ def create_app(test_config=None):
     from app.routes.book_routes import book_bp
     from app.routes.user_routes import user_bp
     from app.routes.borrow_routes import borrow_bp
+    from app.routes.return_routes import return_bp 
 
     app.register_blueprint(book_bp, url_prefix="/api/books")
     app.register_blueprint(user_bp, url_prefix="/api/users")
     app.register_blueprint(borrow_bp, url_prefix="/api/borrow")
+    app.register_blueprint(return_bp, url_prefix="/api/return") 
 
     @app.route("/healthz")
     def healthz():

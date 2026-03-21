@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 borrow_bp = Blueprint('borrow_bp', __name__)
 
 # Borrow a book
-@borrow_bp.route('/borrow', methods=['POST'])
+@borrow_bp.route('/', methods=['POST'])
 def borrow_book():
     data = request.get_json()
     book_id = data['book_id']
@@ -33,18 +33,23 @@ def borrow_book():
 
 
 # Return a book
-@borrow_bp.route('/return/<int:borrow_id>', methods=['PUT'])
-def return_book(borrow_id):
-    borrow = Borrow.query.get(borrow_id)
-    if not borrow or borrow.returned:
+@borrow_bp.route('/return', methods=['PUT'])
+def return_book():
+    data = request.get_json()
+    book_id = data.get("book_id")
+
+    borrow = Borrow.query.filter_by(book_id=book_id, returned=False).first()
+
+    if not borrow:
         return jsonify({"message": "No active borrow record found"}), 400
 
     borrow.returned = True
-    borrow.book.available = True
+    book = Book.query.get(book_id)
+    book.available = True
+
     db.session.commit()
 
-    return jsonify({"message": f"Book '{borrow.book.title}' returned successfully!"})
-
+    return jsonify({"message": "Book returned successfully"}), 200
 
 # Borrow Report (to display all borrowed books)
 @borrow_bp.route('/report', methods=['GET'])
