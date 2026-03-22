@@ -2,7 +2,6 @@ from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS  # ✅ Import CORS
 from datetime import datetime
-from app.models.book import Book 
 import logging
 
 db = SQLAlchemy()
@@ -19,32 +18,32 @@ def create_app(test_config=None):
     if test_config:
         app.config.update(test_config)
 
-    db.init_app(app)
+db.init_app(app)
 
 with app.app_context():
-    try:
-        db.create_all()
+    from app.models.book import Book   # ✅ MUST BE HERE
 
-        if not Book.query.first():
-            book1 = Book(
-                title="Test Book 1",
-                author="Author 1",
-                isbn="ISBN001",
-                available=True
-            )
+    db.create_all()
 
-            book2 = Book(
-                title="Test Book 2",
-                author="Author 2",
-                isbn="ISBN002",
-                available=True
-            )
+    # Seed data
+    if not Book.query.first():
+        book1 = Book(
+            title="Test Book 1",
+            author="Author 1",
+            isbn="ISBN001",
+            available=True
+        )
 
-            db.session.add_all([book1, book2])
-            db.session.commit()
+        book2 = Book(
+            title="Test Book 2",
+            author="Author 2",
+            isbn="ISBN002",
+            available=True
+        )
 
-    except Exception as e:
-        print("DB INIT ERROR:", e)
+        db.session.add_all([book1, book2])
+        db.session.commit()
+   
 
 CORS(app, resources={r"/*": {"origins": "*"}})
 
