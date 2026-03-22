@@ -11,7 +11,7 @@ def create_app(test_config=None):
     logging.basicConfig(level=logging.INFO)
 
     # default config
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///library.db"
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///library_new.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     # override config for testing
