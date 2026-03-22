@@ -26,12 +26,22 @@ with app.app_context():
 
     # Seed data if empty
     if not Book.query.first():
-        book1 = Book(title="Test Book 1", available=True)
-        book2 = Book(title="Test Book 2", available=True)
+        book1 = Book(
+            title="Test Book 1",
+            author="Author 1",
+            isbn="ISBN001",
+            available=True
+        )
+
+        book2 = Book(
+            title="Test Book 2",
+            author="Author 2",
+            isbn="ISBN002",
+            available=True
+        )
 
         db.session.add_all([book1, book2])
         db.session.commit()
-
     CORS(app, resources={r"/*": {"origins": "*"}})
 
     from app.routes.book_routes import book_bp
