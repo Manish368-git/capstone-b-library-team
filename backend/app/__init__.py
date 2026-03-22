@@ -22,27 +22,31 @@ def create_app(test_config=None):
     db.init_app(app)
 
 with app.app_context():
-    db.create_all()
+    try:
+        db.create_all()
 
-    # Seed data if empty
-    if not Book.query.first():
-        book1 = Book(
-            title="Test Book 1",
-            author="Author 1",
-            isbn="ISBN001",
-            available=True
-        )
+        if not Book.query.first():
+            book1 = Book(
+                title="Test Book 1",
+                author="Author 1",
+                isbn="ISBN001",
+                available=True
+            )
 
-        book2 = Book(
-            title="Test Book 2",
-            author="Author 2",
-            isbn="ISBN002",
-            available=True
-        )
+            book2 = Book(
+                title="Test Book 2",
+                author="Author 2",
+                isbn="ISBN002",
+                available=True
+            )
 
-        db.session.add_all([book1, book2])
-        db.session.commit()
-    CORS(app, resources={r"/*": {"origins": "*"}})
+            db.session.add_all([book1, book2])
+            db.session.commit()
+
+    except Exception as e:
+        print("DB INIT ERROR:", e)
+
+CORS(app, resources={r"/*": {"origins": "*"}})
 
     from app.routes.book_routes import book_bp
     from app.routes.user_routes import user_bp
