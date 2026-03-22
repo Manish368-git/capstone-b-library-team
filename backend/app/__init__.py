@@ -2,6 +2,7 @@ from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS  # ✅ Import CORS
 from datetime import datetime
+from app.models.book import Book 
 import logging
 
 db = SQLAlchemy()
@@ -19,6 +20,17 @@ def create_app(test_config=None):
         app.config.update(test_config)
 
     db.init_app(app)
+
+with app.app_context():
+    db.create_all()
+
+    # Seed data if empty
+    if not Book.query.first():
+        book1 = Book(title="Test Book 1", available=True)
+        book2 = Book(title="Test Book 2", available=True)
+
+        db.session.add_all([book1, book2])
+        db.session.commit()
 
     CORS(app, resources={r"/*": {"origins": "*"}})
 
