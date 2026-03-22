@@ -22,8 +22,10 @@ def create_app(test_config=None):
 
     with app.app_context():
         from app.models.book import Book
+        from app.models.user import User
+        from app.models.borrow import Borrow
 
-        
+        db.drop_all()
         db.create_all()
 
         if not Book.query.first():
