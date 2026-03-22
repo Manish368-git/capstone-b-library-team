@@ -21,11 +21,11 @@ def create_app(test_config=None):
 db.init_app(app)
 
 with app.app_context():
-    from app.models.book import Book   # ✅ MUST BE HERE
+    from app.models.book import Book
 
+    db.drop_all()      
     db.create_all()
 
-    # Seed data
     if not Book.query.first():
         book1 = Book(
             title="Test Book 1",
