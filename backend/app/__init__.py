@@ -26,7 +26,7 @@ def create_app(test_config=None):
         from app.models.borrow import Borrow
 
         
-        db.drop_all()
+       
 
         db.create_all()
 
