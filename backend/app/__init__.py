@@ -25,9 +25,12 @@ def create_app(test_config=None):
         from app.models.user import User
         from app.models.borrow import Borrow
 
+        
         db.drop_all()
+
         db.create_all()
 
+        # Seed books
         if not Book.query.first():
             book1 = Book(
                 title="Test Book 1",
@@ -35,16 +38,24 @@ def create_app(test_config=None):
                 isbn="ISBN001",
                 available=True
             )
-
             book2 = Book(
                 title="Test Book 2",
                 author="Author 2",
                 isbn="ISBN002",
                 available=True
             )
-
             db.session.add_all([book1, book2])
-            db.session.commit()
+
+        # ✅ Seed user 
+        if not User.query.first():
+            user1 = User(
+                name="Test User",
+                email="test@example.com"
+            )
+            db.session.add(user1)
+
+        # ✅ Single commit (clean)
+        db.session.commit()
 
     CORS(app, resources={r"/*": {"origins": "*"}})
 
