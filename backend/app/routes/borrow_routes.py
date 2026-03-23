@@ -13,27 +13,38 @@ borrow_bp = Blueprint('borrow_bp', __name__)
 def borrow_book():
     data = request.get_json()
 
+    # Validate request body
     if not data:
-        return jsonify({"message": "Invalid request body"}), 400
+        return jsonify({"error": "Invalid request body"}), 400
 
     book_id = data.get('book_id')
     user_id = data.get('user_id')
 
-    if not book_id or not user_id:
-        return jsonify({"message": "book_id and user_id are required"}), 400
+    # Required validation
+    if book_id is None or user_id is None:
+        return jsonify({"error": "book_id and user_id are required"}), 400
 
+    # ✅ FIXED Type validation (SAFE CAST)
+    try:
+        book_id = int(book_id)
+        user_id = int(user_id)
+    except (ValueError, TypeError):
+        return jsonify({"error": "book_id and user_id must be integers"}), 400
+
+    # Fetch records
     book = db.session.get(Book, book_id)
     user = db.session.get(User, user_id)
 
     if not book:
-        return jsonify({"message": "Book not found"}), 404
+        return jsonify({"error": "Book not found"}), 404
 
     if not user:
-        return jsonify({"message": "User not found"}), 404
+        return jsonify({"error": "User not found"}), 404
 
     if not book.available:
-        return jsonify({"message": "Book not available"}), 400
+        return jsonify({"error": "Book not available"}), 400
 
+    # Create borrow record
     borrow = Borrow(
         book_id=book_id,
         user_id=user_id,
@@ -47,7 +58,9 @@ def borrow_book():
     db.session.add(borrow)
     db.session.commit()
 
-    return jsonify({"message": f"Book '{book.title}' borrowed successfully!"}), 200
+    return jsonify({
+        "message": f"Book '{book.title}' borrowed successfully!"
+    }), 200
 
 
 # ✅ Return a book
@@ -55,18 +68,26 @@ def borrow_book():
 def return_book():
     data = request.get_json()
 
+    # Validate request body
     if not data:
-        return jsonify({"message": "Invalid request body"}), 400
+        return jsonify({"error": "Invalid request body"}), 400
 
     book_id = data.get("book_id")
 
-    if not book_id:
-        return jsonify({"message": "book_id is required"}), 400
+    # Required validation
+    if book_id is None:
+        return jsonify({"error": "book_id is required"}), 400
+
+    # ✅ FIXED Type validation (SAFE CAST)
+    try:
+        book_id = int(book_id)
+    except (ValueError, TypeError):
+        return jsonify({"error": "book_id must be an integer"}), 400
 
     borrow = Borrow.query.filter_by(book_id=book_id, returned=False).first()
 
     if not borrow:
-        return jsonify({"message": "No active borrow record found"}), 400
+        return jsonify({"error": "No active borrow record found"}), 400
 
     book = db.session.get(Book, book_id)
 
@@ -75,7 +96,9 @@ def return_book():
 
     db.session.commit()
 
-    return jsonify({"message": "Book returned successfully"}), 200
+    return jsonify({
+        "message": "Book returned successfully"
+    }), 200
 
 
 # ✅ Borrow report
