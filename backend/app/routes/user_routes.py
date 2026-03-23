@@ -7,6 +7,7 @@ from app import db
 user_bp = Blueprint('user_bp', __name__)
 EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 
+
 def validate_user(data):
     errors = []
 
@@ -23,17 +24,36 @@ def validate_user(data):
         errors.append({"field": "email", "message": "Invalid email format."})
 
     # age: number 0–120
-    try:
-        age_int = int(age)
-        if age_int < 0 or age_int > 120:
-            errors.append({"field": "age", "message": "Age must be between 0 and 120."})
-    except (TypeError, ValueError):
-        errors.append({"field": "age", "message": "Age must be a number."})
+    if age is not None:
+        try:
+            age_int = int(age)
+            if age_int < 0 or age_int > 120:
+                errors.append({"field": "age", "message": "Age must be between 0 and 120."})
+        except (TypeError, ValueError):
+            errors.append({"field": "age", "message": "Age must be a number."})
 
     return errors
 
-@user_bp.route('/', methods=['POST'])
-def add_user():
+
+# ✅ GET + POST combined route
+@user_bp.route('/', methods=['GET', 'POST'])
+def users():
+
+    # -------------------- GET USERS --------------------
+    if request.method == 'GET':
+        users = User.query.all()
+
+        result = []
+        for u in users:
+            result.append({
+                "id": u.id,
+                "name": u.name,
+                "email": u.email
+            })
+
+        return jsonify(result), 200
+
+    # -------------------- ADD USER (POST) --------------------
     data = request.get_json(silent=True) or {}
 
     errors = validate_user(data)
