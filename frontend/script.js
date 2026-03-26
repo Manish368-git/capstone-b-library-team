@@ -2,7 +2,7 @@
    Codex — Library Management System
    ============================================================ */
 
-const API      = 'http://127.0.0.1:5000/api';
+const API      = 'http://127.0.0.1:5001/api';
 const LOAN_DAYS = 14;
 
 /* ---- Avatar colours ---- */
@@ -40,13 +40,24 @@ document.body.appendChild(overlay);
 function navigate(section) {
   navItems.forEach(n => n.classList.toggle('active', n.dataset.section === section));
   pages.forEach(p => p.classList.toggle('active', p.id === `page-${section}`));
+
   const names = {
-    dashboard: 'Dashboard', books: 'Books',
-    members: 'Members', borrowing: 'Borrow a Book', records: 'Borrow Records'
+    dashboard: 'Dashboard',
+    books: 'Books',
+    members: 'Members',
+    borrowing: 'Borrow a Book',
+    records: 'Borrow Records'
   };
+
   breadcrumb.textContent = names[section] || section;
   sidebar.classList.remove('open');
   overlay.classList.remove('show');
+
+  // refresh borrowing dropdowns when opening Borrowing page
+  if (section === 'borrowing') {
+    updateBorrowUserSelect(allUsers);
+    updateBorrowBookSelect(allBooks);
+  }
 }
 
 navItems.forEach(item =>
@@ -331,6 +342,7 @@ async function loadUsers() {
   try {
     const res = await fetch(`${API}/users/`);
     allUsers  = await res.json();
+    console.log("Users:", allUsers);
     renderUsers(allUsers);
     updateBorrowUserSelect(allUsers);
     updateDashboardStats();
@@ -415,10 +427,15 @@ document.getElementById('add-user-form').addEventListener('submit', async e => {
    ==================================================== */
 let allBorrows    = [];
 let currentFilter = 'all';
+let currentBorrowSearch = '';
 
 async function loadBorrowedBooks() {
   try {
-    const res  = await fetch(`${API}/borrow/report`);
+    const url = currentBorrowSearch
+  ? `${API}/borrow/report?search=${currentBorrowSearch}`
+  : `${API}/borrow/report`;
+
+const res = await fetch(url);
     allBorrows = await res.json();
     renderBorrows(allBorrows, currentFilter);
     updateDashboardStats();
@@ -476,7 +493,7 @@ function renderBorrows(borrows, filter = 'all') {
       openReturnModal(btn.dataset.book, async () => {
         setLoading(true);
         try {
-          await fetch(`${API}/borrow/return/${btn.dataset.id}`, { method:'PUT' });
+          await fetch(`${API}/borrow/return${btn.dataset.id}`, { method:'PUT' });
           showToast('Book Returned', `"${btn.dataset.book}" returned.`, 'info');
           logActivity(`Returned: "${btn.dataset.book}"`, '#3ecf8e');
           await loadBooks();
@@ -494,16 +511,19 @@ document.getElementById('borrow-book-form').addEventListener('submit', async e =
   const bookSel = document.getElementById('borrow-book');
   clearErrors('err-borrow-user','err-borrow-book');
   let valid = true;
-  if (!userSel.value) valid = setFieldError(userSel, 'err-borrow-user', 'Please select a member.') && valid;
-  if (!bookSel.value) valid = setFieldError(bookSel, 'err-borrow-book', 'Please select a book.')   && valid;
+  if (!userSel.value || isNaN(userSel.value)) valid = setFieldError(userSel, 'err-borrow-user', 'Please select a member.') && valid;
+  if (!bookSel.value || isNaN(bookSel.value))valid = setFieldError(bookSel, 'err-borrow-book', 'Please select a book.')   && valid;
   if (!valid) return;
   const userName = userSel.selectedOptions[0]?.text || '';
   const bookName = bookSel.selectedOptions[0]?.text || '';
   setLoading(true);
   try {
-    await fetch(`${API}/borrow/borrow`, {
+   await fetch(`${API}/borrow/`, {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ user_id:userSel.value, book_id:bookSel.value }),
+      body: JSON.stringify({ 
+  user_id: parseInt(userSel.value), 
+  book_id: parseInt(bookSel.value) 
+}),
     });
     showToast('Book Issued', `${userName} borrowed "${bookName}".`, 'success');
     logActivity(`${userName} borrowed "${bookName}"`, '#f0a500');
@@ -523,6 +543,15 @@ document.querySelectorAll('.filter-tab').forEach(tab => {
     renderBorrows(allBorrows, currentFilter);
   });
 });
+// ✅ Borrow search
+const borrowSearchInput = document.getElementById('borrow-search');
+
+if (borrowSearchInput) {
+  borrowSearchInput.addEventListener('input', async (e) => {
+    currentBorrowSearch = e.target.value.toLowerCase();
+    await loadBorrowedBooks();
+  });
+}
 
 /* ---- Dashboard Stats ---- */
 function updateDashboardStats() {
