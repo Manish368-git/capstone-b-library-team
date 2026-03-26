@@ -104,16 +104,46 @@ def return_book():
 # ✅ Borrow report
 @borrow_bp.route('/report', methods=['GET'])
 def borrow_report():
-    borrows = Borrow.query.all()
+    search = request.args.get('search', '').strip().lower()
+    status = request.args.get('status', '').strip().lower()
 
+    borrows = Borrow.query.all()
     result = []
+
     for b in borrows:
+        user_name = b.user.name if b.user else ''
+        book_title = b.book.title if b.book else ''
+        due_date_str = b.due_date.strftime('%Y-%m-%d') if b.due_date else None
+        borrow_date_str = b.borrow_date.strftime('%Y-%m-%d') if b.borrow_date else None
+
+        # Determine record status
+        if b.returned:
+            record_status = 'returned'
+        elif b.due_date and b.due_date < datetime.now():
+            record_status = 'overdue'
+        else:
+            record_status = 'active'
+
+        # Search filter
+        if search:
+            combined_text = f"{user_name} {book_title}".lower()
+            if search not in combined_text:
+                continue
+
+        # Status filter
+        if status and status != 'all':
+            if record_status != status:
+                continue
+
         result.append({
             'id': b.id,
-            'user_name': b.user.name if b.user else None,
-            'book_title': b.book.title if b.book else None,
-            'borrow_date': b.borrow_date.strftime('%Y-%m-%d'),
-            'returned': b.returned
+            'book_id': b.book_id,
+            'user_name': user_name,
+            'book_title': book_title,
+            'borrow_date': borrow_date_str,
+            'due_date': due_date_str,
+            'returned': b.returned,
+            'status': record_status
         })
 
     return jsonify(result), 200
