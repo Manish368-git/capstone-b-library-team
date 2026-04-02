@@ -1,5 +1,5 @@
 /* ============================================================
-   Codex — Library Management System
+   Library Management System
    ============================================================ */
 
 const API      = 'http://127.0.0.1:5001/api';
@@ -479,7 +479,7 @@ function renderBorrows(borrows, filter = 'all') {
       <td style="font-size:0.82rem;${dueStyle}">${dueStr}</td>
       <td><span class="badge ${badgeCls}">${badgeTxt}</span></td>
       <td>${!b.returned
-        ? `<button class="btn-return" data-id="${b.id}" data-book="${escHtml(b.book_title)}">
+        ? `<button class="btn-return" data-book-id="${b.book_id}" data-book="${escHtml(b.book_title)}">
              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
              Return
            </button>`
@@ -493,7 +493,15 @@ function renderBorrows(borrows, filter = 'all') {
       openReturnModal(btn.dataset.book, async () => {
         setLoading(true);
         try {
-          await fetch(`${API}/borrow/return${btn.dataset.id}`, { method:'PUT' });
+          await fetch(`${API}/borrow/return`, {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    book_id: Number(btn.dataset.bookId)
+  })
+});
           showToast('Book Returned', `"${btn.dataset.book}" returned.`, 'info');
           logActivity(`Returned: "${btn.dataset.book}"`, '#3ecf8e');
           await loadBooks();
