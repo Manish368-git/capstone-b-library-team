@@ -4,26 +4,22 @@ from flask import Blueprint, jsonify, request
 from app.models.user import User
 from app import db
 
-user_bp = Blueprint('user_bp', __name__)
+user_bp  = Blueprint('user_bp', __name__)
 EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 
 
 def validate_user(data):
     errors = []
-
-    name = (data.get("name") or "").strip()
+    name  = (data.get("name")  or "").strip()
     email = (data.get("email") or "").strip()
-    age = data.get("age")
+    age   =  data.get("age")
 
-    # name: 2–50 characters
     if len(name) < 2 or len(name) > 50:
         errors.append({"field": "name", "message": "Name must be 2-50 characters."})
 
-    # email: simple format check
     if not EMAIL_RE.match(email):
         errors.append({"field": "email", "message": "Invalid email format."})
 
-    # age: number 0–120
     if age is not None:
         try:
             age_int = int(age)
@@ -35,34 +31,27 @@ def validate_user(data):
     return errors
 
 
-# ✅ GET + POST combined route
 @user_bp.route('/', methods=['GET', 'POST'])
 def users():
 
-    # -------------------- GET USERS --------------------
     if request.method == 'GET':
-        users = User.query.all()
+        return jsonify([{
+            "id":    u.id,
+            "name":  u.name,
+            "email": u.email,
+            "age":   u.age,
+        } for u in User.query.all()]), 200
 
-        result = []
-        for u in users:
-            result.append({
-                "id": u.id,
-                "name": u.name,
-                "email": u.email
-            })
-
-        return jsonify(result), 200
-
-    # -------------------- ADD USER (POST) --------------------
-    data = request.get_json(silent=True) or {}
-
+    data   = request.get_json(silent=True) or {}
     errors = validate_user(data)
+
     if errors:
         return jsonify({"errors": errors}), 400
 
     new_user = User(
-        name=data["name"].strip(),
-        email=data["email"].strip()
+        name  = data["name"].strip(),
+        email = data["email"].strip(),
+        age   = int(data["age"]) if data.get("age") is not None else None,
     )
 
     db.session.add(new_user)
@@ -71,8 +60,6 @@ def users():
         db.session.commit()
     except IntegrityError:
         db.session.rollback()
-        return jsonify(
-            {"errors": [{"field": "email", "message": "Email already exists."}]}
-        ), 400
+        return jsonify({"errors": [{"field": "email", "message": "Email already exists."}]}), 400
 
     return jsonify({"message": "User added successfully"}), 201
