@@ -1,3 +1,103 @@
+/* ============================================================
+   LOGIN SYSTEM
+   ============================================================ */
+
+function getToken() {
+  return localStorage.getItem('gyaan_token');
+}
+
+function setToken(token, username) {
+  localStorage.setItem('gyaan_token', token);
+  localStorage.setItem('gyaan_username', username);
+}
+
+function clearToken() {
+  localStorage.removeItem('gyaan_token');
+  localStorage.removeItem('gyaan_username');
+}
+
+function isLoggedIn() {
+  return !!getToken();
+}
+
+function showLoginPage() {
+  document.getElementById('login-overlay').classList.remove('hidden');
+}
+
+function hideLoginPage() {
+  document.getElementById('login-overlay').classList.add('hidden');
+}
+
+// Check login on page load
+if (!isLoggedIn()) {
+  showLoginPage();
+}
+
+// Toggle password visibility
+document.getElementById('toggle-password').addEventListener('click', () => {
+  const input = document.getElementById('login-password');
+  input.type = input.type === 'password' ? 'text' : 'password';
+});
+
+// Login form submit
+document.getElementById('login-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const usernameEl = document.getElementById('login-username');
+  const passwordEl = document.getElementById('login-password');
+  const errorBox   = document.getElementById('login-error');
+  const errorMsg   = document.getElementById('login-error-msg');
+  const btnText    = document.getElementById('btn-login-text');
+  const btnSpinner = document.getElementById('btn-login-spinner');
+
+  errorBox.classList.add('hidden');
+
+  const username = usernameEl.value.trim();
+  const password = passwordEl.value.trim();
+
+  if (!username || !password) {
+    errorMsg.textContent = 'Please enter username and password.';
+    errorBox.classList.remove('hidden');
+    return;
+  }
+
+  btnText.textContent = 'Signing in...';
+  btnSpinner.classList.remove('hidden');
+
+  try {
+    const res = await fetch(`${API}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      errorMsg.textContent = data.error || 'Invalid username or password.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
+    setToken(data.token, data.username);
+    hideLoginPage();
+    showToast('Welcome back!', `Logged in as ${data.username}`, 'success');
+
+  } catch {
+    errorMsg.textContent = 'Could not connect to server. Is the backend running?';
+    errorBox.classList.remove('hidden');
+  } finally {
+    btnText.textContent = 'Sign In';
+    btnSpinner.classList.add('hidden');
+  }
+});
+
+// Logout button
+document.getElementById('btn-logout').addEventListener('click', () => {
+  clearToken();
+  showLoginPage();
+  showToast('Logged out', 'See you next time!', 'info');
+});
+
 const API = (
   window.location.hostname === 'localhost' ||
   window.location.hostname === '127.0.0.1'
