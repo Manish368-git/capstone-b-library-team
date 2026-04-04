@@ -63,3 +63,43 @@ def users():
         return jsonify({"errors": [{"field": "email", "message": "Email already exists."}]}), 400
 
     return jsonify({"message": "User added successfully"}), 201
+
+
+@user_bp.route('/<int:user_id>', methods=['PUT'])
+def edit_user(user_id):
+    user = db.session.get(User, user_id)
+    if not user:
+        return jsonify({'error': 'Member not found'}), 404
+
+    data   = request.get_json(silent=True) or {}
+    errors = validate_user(data)
+
+    if errors:
+        return jsonify({"errors": errors}), 400
+
+    existing = User.query.filter_by(email=data["email"].strip()).first()
+    if existing and existing.id != user_id:
+        return jsonify({"errors": [{"field": "email", "message": "Email already exists."}]}), 400
+
+    user.name  = data["name"].strip()
+    user.email = data["email"].strip()
+    user.age   = int(data["age"]) if data.get("age") is not None else None
+
+    db.session.commit()
+    return jsonify({"message": "Member updated successfully!"}), 200
+
+
+@user_bp.route('/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    user = db.session.get(User, user_id)
+    if not user:
+        return jsonify({'error': 'Member not found'}), 404
+
+    from app.models.borrow import Borrow
+    active = Borrow.query.filter_by(user_id=user_id, returned=False).first()
+    if active:
+        return jsonify({'error': 'Cannot delete a member with active loans'}), 400
+
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({'message': f"Member '{user.name}' deleted successfully!"}), 200
