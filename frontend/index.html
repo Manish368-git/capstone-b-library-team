@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Codex — Library Management System</title>
+  <title>Gyaan — Library Management System</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -14,15 +14,20 @@
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
       <div class="logo-icon">
-        <svg viewBox="0 0 32 32" fill="none">
-          <rect x="4"  y="4" width="6"  height="24" rx="2" fill="currentColor" opacity="1"/>
-          <rect x="12" y="7" width="5"  height="21" rx="2" fill="currentColor" opacity="0.7"/>
-          <rect x="20" y="3" width="8"  height="26" rx="2" fill="currentColor" opacity="0.45"/>
+        <svg width="38" height="38" viewBox="0 0 80 80" fill="none">
+          <!-- Left book page -->
+          <path d="M20 18 C20 18 38 14 40 40 L40 62 C40 62 20 58 20 58 Z" fill="#d4a843" fill-opacity="0.2" stroke="#d4a843" stroke-width="2" stroke-linejoin="round"/>
+          <!-- Right book page -->
+          <path d="M60 18 C60 18 42 14 40 40 L40 62 C40 62 60 58 60 58 Z" fill="#d4a843" fill-opacity="0.35" stroke="#d4a843" stroke-width="2" stroke-linejoin="round"/>
+          <!-- Spine -->
+          <line x1="40" y1="14" x2="40" y2="62" stroke="#d4a843" stroke-width="2.5"/>
+          <!-- G letter -->
+          <text x="18" y="56" font-family="Georgia, serif" font-size="36" font-weight="700" fill="#d4a843">G</text>
         </svg>
       </div>
       <div class="logo-text">
-        <span class="logo-title">Codex</span>
-        <span class="logo-sub">Library System</span>
+        <span class="logo-title">Gyaan</span>
+        <span class="logo-sub">Library Management System</span>
       </div>
     </div>
 
@@ -80,6 +85,10 @@
         </div>
       </div>
       <div class="topbar-right">
+        <button class="btn-logout" id="btn-logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logout
+        </button>
         <div class="topbar-avatar">LM</div>
       </div>
     </header>
@@ -386,16 +395,84 @@
     <footer class="site-footer">
       <div class="footer-inner">
         <div class="footer-brand">
-          <svg viewBox="0 0 32 32" fill="none" width="20" height="20">
-            <rect x="4" y="4" width="6" height="24" rx="2" fill="currentColor" opacity="0.9"/>
-            <rect x="12" y="7" width="5" height="21" rx="2" fill="currentColor" opacity="0.65"/>
-            <rect x="20" y="3" width="8" height="26" rx="2" fill="currentColor" opacity="0.4"/>
+          <svg width="20" height="20" viewBox="0 0 80 80" fill="none">
+            <path d="M20 18 C20 18 38 14 40 40 L40 62 C40 62 20 58 20 58 Z" fill="#d4a843" fill-opacity="0.2" stroke="#d4a843" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M60 18 C60 18 42 14 40 40 L40 62 C40 62 60 58 60 58 Z" fill="#d4a843" fill-opacity="0.35" stroke="#d4a843" stroke-width="2" stroke-linejoin="round"/>
+            <line x1="40" y1="14" x2="40" y2="62" stroke="#d4a843" stroke-width="2.5"/>
+            <text x="18" y="56" font-family="Georgia, serif" font-size="36" font-weight="700" fill="#d4a843">G</text>
           </svg>
-          <span>Codex LMS</span>
+          <span>Gyaan LMS</span>
         </div>
-        <span class="footer-copy">© 2026 Codex Library Management System · Capstone B</span>
+        <span class="footer-copy">© 2026 Gyaan Library Management System · Capstone B</span>
       </div>
     </footer>
+  </div>
+
+
+  <!-- Edit Book Modal -->
+  <div class="modal-overlay hidden" id="edit-book-modal">
+    <div class="modal">
+      <h3 class="modal-title">Edit Book</h3>
+      <form id="edit-book-form" class="form-stack" novalidate>
+        <div class="form-group">
+          <label for="edit-book-title">Book Title</label>
+          <input type="text" id="edit-book-title" placeholder="Book title" />
+          <span class="field-error" id="err-edit-book-title"></span>
+        </div>
+        <div class="form-group">
+          <label for="edit-book-author">Author</label>
+          <input type="text" id="edit-book-author" placeholder="Author" />
+          <span class="field-error" id="err-edit-book-author"></span>
+        </div>
+        <div class="form-group">
+          <label for="edit-book-isbn">ISBN</label>
+          <input type="text" id="edit-book-isbn" placeholder="ISBN" />
+          <span class="field-error" id="err-edit-book-isbn"></span>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-modal-cancel" id="edit-book-cancel">Cancel</button>
+          <button type="submit" class="btn-modal-confirm">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Member Modal -->
+  <div class="modal-overlay hidden" id="edit-user-modal">
+    <div class="modal">
+      <h3 class="modal-title">Edit Member</h3>
+      <form id="edit-user-form" class="form-stack" novalidate>
+        <div class="form-group">
+          <label for="edit-user-name">Full Name</label>
+          <input type="text" id="edit-user-name" placeholder="Full name" />
+          <span class="field-error" id="err-edit-user-name"></span>
+        </div>
+        <div class="form-group">
+          <label for="edit-user-email">Email Address</label>
+          <input type="email" id="edit-user-email" placeholder="Email" />
+          <span class="field-error" id="err-edit-user-email"></span>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-modal-cancel" id="edit-user-cancel">Cancel</button>
+          <button type="submit" class="btn-modal-confirm">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay hidden" id="delete-modal">
+    <div class="modal">
+      <div class="modal-icon-wrap" style="background:var(--red-bg);border-color:rgba(247,110,110,0.3);color:var(--red)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      </div>
+      <h3 class="modal-title" id="delete-modal-title">Delete?</h3>
+      <p class="modal-msg" id="delete-modal-msg">This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" id="delete-modal-cancel">Cancel</button>
+        <button class="btn-modal-confirm" id="delete-modal-confirm" style="background:var(--red);color:#fff">Yes, Delete</button>
+      </div>
+    </div>
   </div>
 
   <!-- Return Modal -->
@@ -422,6 +499,57 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+    <!-- LOGIN PAGE -->
+  <div class="login-overlay" id="login-overlay">
+    <div class="login-card">
+      <div class="login-logo">
+        <svg width="52" height="52" viewBox="0 0 80 80" fill="none">
+          <path d="M20 18 C20 18 38 14 40 40 L40 62 C40 62 20 58 20 58 Z" fill="#d4a843" fill-opacity="0.2" stroke="#d4a843" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M60 18 C60 18 42 14 40 40 L40 62 C40 62 60 58 60 58 Z" fill="#d4a843" fill-opacity="0.35" stroke="#d4a843" stroke-width="2" stroke-linejoin="round"/>
+          <line x1="40" y1="14" x2="40" y2="62" stroke="#d4a843" stroke-width="2.5"/>
+          <text x="18" y="56" font-family="Georgia, serif" font-size="36" font-weight="700" fill="#d4a843">G</text>
+        </svg>
+      </div>
+      <h1 class="login-title">Gyaan LMS</h1>
+      <p class="login-subtitle">Library Management System</p>
+      <p class="login-desc">Sign in to access the library dashboard</p>
+
+      <form id="login-form" class="login-form" novalidate>
+        <div class="form-group">
+          <label for="login-username">Username</label>
+          <div class="login-input-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <input type="text" id="login-username" placeholder="Enter username" autocomplete="username" />
+          </div>
+          <span class="field-error" id="err-login-username"></span>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <div class="login-input-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input type="password" id="login-password" placeholder="Enter password" autocomplete="current-password" />
+            <button type="button" class="toggle-password" id="toggle-password">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <span class="field-error" id="err-login-password"></span>
+        </div>
+        <div class="login-error hidden" id="login-error">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="login-error-msg">Invalid username or password</span>
+        </div>
+        <button type="submit" class="btn-login" id="btn-login">
+          <span id="btn-login-text">Sign In</span>
+          <div class="btn-login-spinner hidden" id="btn-login-spinner"></div>
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <p>Gyaan Library Management System · Capstone B · 2026</p>
+      </div>
+    </div>
+  </div>
+
+<script src="script.js"></script>
 </body>
 </html>
