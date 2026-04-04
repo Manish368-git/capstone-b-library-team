@@ -41,3 +41,49 @@ def add_book():
     db.session.add(new_book)
     db.session.commit()
     return jsonify({"message": f"Book '{new_book.title}' added successfully!"}), 201
+
+
+@book_bp.route('/<int:book_id>', methods=['PUT'])
+def edit_book(book_id):
+    book = db.session.get(Book, book_id)
+    if not book:
+        return jsonify({'error': 'Book not found'}), 404
+
+    data   = request.get_json(silent=True) or {}
+    errors = []
+    title  = data.get('title',  '').strip()
+    author = data.get('author', '').strip()
+    isbn   = data.get('isbn',   '').strip()
+
+    if not title:
+        errors.append({'field': 'title',  'message': 'Title is required.'})
+    if not author:
+        errors.append({'field': 'author', 'message': 'Author is required.'})
+    if not isbn:
+        errors.append({'field': 'isbn',   'message': 'ISBN is required.'})
+    if errors:
+        return jsonify({'errors': errors}), 400
+
+    existing = Book.query.filter_by(isbn=isbn).first()
+    if existing and existing.id != book_id:
+        return jsonify({'errors': [{'field': 'isbn', 'message': 'ISBN already exists.'}]}), 400
+
+    book.title  = title
+    book.author = author
+    book.isbn   = isbn
+    db.session.commit()
+    return jsonify({'message': f"Book '{book.title}' updated successfully!"}), 200
+
+
+@book_bp.route('/<int:book_id>', methods=['DELETE'])
+def delete_book(book_id):
+    book = db.session.get(Book, book_id)
+    if not book:
+        return jsonify({'error': 'Book not found'}), 404
+
+    if not book.available:
+        return jsonify({'error': 'Cannot delete a book that is currently on loan'}), 400
+
+    db.session.delete(book)
+    db.session.commit()
+    return jsonify({'message': f"Book '{book.title}' deleted successfully!"}), 200
