@@ -648,6 +648,7 @@ if (borrowSearchInput) {
 }
 
 function updateDashboardStats() {
+  renderChart();
   animateNumber('dash-total-books',     allBooks.length);
   animateNumber('dash-available-books', allBooks.filter(b => b.available).length);
   animateNumber('dash-total-members',   allUsers.length);
@@ -704,3 +705,88 @@ function formatDate(dateStr) {
     setLoading(false);
   }
 })();
+
+/* ============================================================
+   DASHBOARD CHART
+   ============================================================ */
+let libraryChart = null;
+
+function renderChart() {
+  const canvas = document.getElementById('library-chart');
+  if (!canvas) return;
+
+  const totalBooks     = allBooks.length;
+  const availableBooks = allBooks.filter(b => b.available).length;
+  const onLoan         = allBorrows.filter(b => b.status === 'active' || b.status === 'overdue').length;
+  const overdue        = allBorrows.filter(b => b.status === 'overdue').length;
+  const returned       = allBorrows.filter(b => b.status === 'returned').length;
+
+  if (libraryChart) {
+    libraryChart.data.datasets[0].data = [totalBooks, availableBooks, onLoan, overdue, returned];
+    libraryChart.update();
+    return;
+  }
+
+  libraryChart = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: ['Total Books', 'Available', 'On Loan', 'Overdue', 'Returned'],
+      datasets: [{
+        label: 'Books',
+        data: [totalBooks, availableBooks, onLoan, overdue, returned],
+        backgroundColor: [
+          'rgba(212,168,67,0.7)',
+          'rgba(62,207,142,0.7)',
+          'rgba(240,168,50,0.7)',
+          'rgba(247,110,110,0.7)',
+          'rgba(74,144,217,0.7)',
+        ],
+        borderColor: [
+          '#d4a843',
+          '#3ecf8e',
+          '#f0a832',
+          '#f76e6e',
+          '#4a90d9',
+        ],
+        borderWidth: 2,
+        borderRadius: 8,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#181e32',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          titleColor: '#f0ebe0',
+          bodyColor: '#b8bece',
+          padding: 12,
+          cornerRadius: 8,
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#6e7a92', font: { family: 'Outfit', size: 12 } },
+          border: { color: 'rgba(255,255,255,0.05)' }
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: {
+            color: '#6e7a92',
+            font: { family: 'Outfit', size: 12 },
+            stepSize: 1,
+            precision: 0
+          },
+          border: { color: 'rgba(255,255,255,0.05)' }
+        }
+      }
+    }
+  });
+}
+

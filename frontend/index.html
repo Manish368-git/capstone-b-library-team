@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -151,7 +152,16 @@
             </div>
           </div>
         </div>
-        <div class="dashboard-bottom">
+        <div class="card" style="margin-bottom:20px">
+        <div class="card-header">
+          <h3 class="card-title">Library Overview</h3>
+          <span class="card-badge">Live</span>
+        </div>
+        <div style="padding:20px;height:280px">
+          <canvas id="library-chart"></canvas>
+        </div>
+      </div>
+      <div class="dashboard-bottom">
           <div class="card">
             <div class="card-header">
               <h3 class="card-title">Recent Activity</h3>
