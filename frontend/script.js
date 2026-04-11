@@ -356,8 +356,51 @@ function renderBooks(books) {
       <td style="font-weight:500;color:var(--text-1)">${escHtml(book.title)}</td>
       <td>${escHtml(book.author)}</td>
       <td style="font-family:monospace;font-size:0.78rem;color:var(--text-3)">${escHtml(book.isbn)}</td>
-      <td><span class="badge ${book.available ? 'badge-green' : 'badge-red'}">${book.available ? 'Available' : 'On Loan'}</span></td>`;
+      <td><span class="category-badge">${escHtml(book.category || 'General')}</span></td>
+      <td><span class="badge ${book.available ? 'badge-green' : 'badge-red'}">${book.available ? 'Available' : 'On Loan'}</span></td>
+      <td>
+        <div class="action-btns">
+          <button class="btn-edit" data-id="${book.id}" title="Edit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit
+          </button>
+          <button class="btn-delete" data-id="${book.id}" data-title="${escHtml(book.title)}" title="Delete">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            Delete
+          </button>
+        </div>
+      </td>`;
     tbody.appendChild(tr);
+  });
+
+  document.querySelectorAll('#book-list .btn-edit').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const book = allBooks.find(b => b.id === parseInt(btn.dataset.id));
+      if (book) openEditBookModal(book);
+    });
+  });
+
+  document.querySelectorAll('#book-list .btn-delete').forEach(btn => {
+    btn.addEventListener('click', () => {
+      openDeleteModal(`Delete "${btn.dataset.title}"?`, 'This action cannot be undone.', async () => {
+        setLoading(true);
+        try {
+          const res = await fetch(`${API}/books/${btn.dataset.id}`, { method: 'DELETE' });
+          if (!res.ok) {
+            const data = await res.json();
+            showToast('Error', data.error || 'Failed to delete book.', 'error');
+            return;
+          }
+          showToast('Book Deleted', `"${btn.dataset.title}" has been removed.`, 'info');
+          logActivity(`Deleted book: "${btn.dataset.title}"`, '#f76e6e');
+          await loadBooks();
+        } catch {
+          showToast('Error', 'Failed to delete book.', 'error');
+        } finally {
+          setLoading(false);
+        }
+      });
+    });
   });
 }
 
@@ -396,7 +439,7 @@ document.getElementById('add-book-form').addEventListener('submit', async e => {
   try {
     const res = await fetch(`${API}/books/`, {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ title:titleEl.value.trim(), author:authorEl.value.trim(), isbn:isbnEl.value.trim() }),
+      body: JSON.stringify({ title:titleEl.value.trim(), author:authorEl.value.trim(), isbn:isbnEl.value.trim(), category:document.getElementById('book-category').value }),
     });
     if (!res.ok) {
       const data = await res.json();
@@ -790,3 +833,70 @@ function renderChart() {
   });
 }
 
+
+/* ============================================================
+   MEMBER HISTORY
+   ============================================================ */
+async function openMemberHistory(userId, userName) {
+  document.getElementById('history-modal-title').textContent = `${userName} — Borrow History`;
+  document.getElementById('history-list').innerHTML = '';
+  document.getElementById('history-stats').innerHTML = '';
+  document.getElementById('history-empty').classList.add('hidden');
+  document.getElementById('history-modal').classList.remove('hidden');
+
+  try {
+    const res  = await fetch(`${API}/borrow/member/${userId}`);
+    const data = await res.json();
+
+    // Stats
+    document.getElementById('history-stats').innerHTML = `
+      <div class="history-stat">
+        <span class="history-stat-value">${data.total}</span>
+        <span class="history-stat-label">Total</span>
+      </div>
+      <div class="history-stat">
+        <span class="history-stat-value" style="color:var(--amber)">${data.active}</span>
+        <span class="history-stat-label">Active</span>
+      </div>
+      <div class="history-stat">
+        <span class="history-stat-value" style="color:var(--red)">${data.overdue}</span>
+        <span class="history-stat-label">Overdue</span>
+      </div>
+      <div class="history-stat">
+        <span class="history-stat-value" style="color:var(--green)">${data.returned}</span>
+        <span class="history-stat-label">Returned</span>
+      </div>`;
+
+    if (!data.borrows.length) {
+      document.getElementById('history-empty').classList.remove('hidden');
+      return;
+    }
+
+    const tbody = document.getElementById('history-list');
+    data.borrows.forEach(b => {
+      const badgeCls = b.status === 'returned' ? 'badge-green' : b.status === 'overdue' ? 'badge-red' : 'badge-orange';
+      const badgeTxt = b.status === 'returned' ? 'Returned'   : b.status === 'overdue' ? 'Overdue'  : 'Active';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="font-weight:500;color:var(--text-1)">${escHtml(b.book_title)}</td>
+        <td style="font-size:0.82rem;color:var(--text-3)">${formatDate(b.borrow_date)}</td>
+        <td style="font-size:0.82rem;color:${b.status === 'overdue' ? 'var(--red)' : 'var(--text-3)'}">${formatDate(b.due_date)}</td>
+        <td><span class="badge ${badgeCls}">${badgeTxt}</span></td>`;
+      tbody.appendChild(tr);
+    });
+
+  } catch {
+    showToast('Error', 'Could not load member history.', 'error');
+    document.getElementById('history-modal').classList.add('hidden');
+  }
+}
+
+document.getElementById('history-modal-close').addEventListener('click', () => {
+  document.getElementById('history-modal').classList.add('hidden');
+});
+
+document.getElementById('history-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('history-modal')) {
+    document.getElementById('history-modal').classList.add('hidden');
+  }
+});

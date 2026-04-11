@@ -95,6 +95,12 @@
     </header>
 
     <main class="content">
+      <!-- Overdue Warning Banner -->
+      <div class="overdue-banner hidden" id="overdue-banner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span><strong id="overdue-banner-count">0</strong> book(s) are overdue! Please follow up with members.</span>
+        <button onclick="navigate('records');document.querySelector('[data-filter=overdue]').click()" class="banner-btn">View Overdue</button>
+      </div>
 
       <!-- DASHBOARD -->
       <section class="page active" id="page-dashboard">
@@ -202,7 +208,7 @@
         <div class="page-header">
           <div>
             <h1 class="page-title">Books</h1>
-            <p class="page-subtitle">Manage the Codex book collection.</p>
+            <p class="page-subtitle">Manage the Gyaan book collection.</p>
           </div>
         </div>
         <div class="two-col">
@@ -224,6 +230,24 @@
                 <input type="text" id="isbn" placeholder="e.g. 978-3-16-148410-0" autocomplete="off" />
                 <span class="field-error" id="err-isbn"></span>
               </div>
+              <div class="form-group">
+                <label for="book-category">Category</label>
+                <div class="select-wrap">
+                  <select id="book-category">
+                    <option value="General">General</option>
+                    <option value="Fiction">Fiction</option>
+                    <option value="Non-Fiction">Non-Fiction</option>
+                    <option value="Science">Science</option>
+                    <option value="Technology">Technology</option>
+                    <option value="History">History</option>
+                    <option value="Biography">Biography</option>
+                    <option value="Children">Children</option>
+                    <option value="Education">Education</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+              </div>
               <button type="submit" class="btn-primary">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 Add Book
@@ -240,7 +264,7 @@
             </div>
             <div class="table-wrap">
               <table class="data-table" id="book-table">
-                <thead><tr><th>Title</th><th>Author</th><th>ISBN</th><th>Status</th></tr></thead>
+                <thead><tr><th>Title</th><th>Author</th><th>ISBN</th><th>Category</th><th>Status</th><th>Actions</th></tr></thead>
                 <tbody id="book-list"></tbody>
               </table>
               <div class="empty-state hidden" id="book-empty">
@@ -290,7 +314,7 @@
             </div>
             <div class="table-wrap">
               <table class="data-table" id="user-table">
-                <thead><tr><th>Member</th><th>Email</th><th>ID</th></tr></thead>
+                <thead><tr><th>Member</th><th>Email</th><th>ID</th><th>Actions</th></tr></thead>
                 <tbody id="user-list"></tbody>
               </table>
               <div class="empty-state hidden" id="member-empty">
@@ -419,6 +443,36 @@
   </div>
 
 
+
+  <!-- Member History Modal -->
+  <div class="modal-overlay hidden" id="history-modal">
+    <div class="modal" style="width:min(650px,95vw);text-align:left">
+      <div class="card-header" style="padding:0 0 16px 0;border:none">
+        <h3 class="modal-title" id="history-modal-title">Member History</h3>
+        <button class="btn-modal-cancel" id="history-modal-close">Close</button>
+      </div>
+      <div class="history-stats" id="history-stats"></div>
+      <div class="table-wrap" style="max-height:340px;overflow-y:auto">
+        <table class="data-table" id="history-table">
+          <thead>
+            <tr>
+              <th>Book</th>
+              <th>Borrowed</th>
+              <th>Due Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="history-list"></tbody>
+        </table>
+        <div class="empty-state hidden" id="history-empty">
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <p>No borrow history yet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- Edit Book Modal -->
   <div class="modal-overlay hidden" id="edit-book-modal">
     <div class="modal">

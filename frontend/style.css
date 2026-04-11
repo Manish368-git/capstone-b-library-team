@@ -665,3 +665,123 @@ svg { display:block; flex-shrink:0; }
 .toggle-password {
   right: 14px !important;
 }
+
+/* ── Overdue Banner ────────────────────────────────────────────── */
+.overdue-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--red-bg);
+  border: 1px solid rgba(247,110,110,0.3);
+  border-radius: var(--r-lg);
+  padding: 14px 20px;
+  margin-bottom: 24px;
+  color: var(--red);
+  font-size: 0.88rem;
+  animation: fadeUp 300ms var(--ease);
+}
+.overdue-banner.hidden { display: none; }
+.overdue-banner svg { width: 18px; height: 18px; flex-shrink: 0; }
+.overdue-banner span { flex: 1; }
+.banner-btn {
+  background: var(--red);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-md);
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: opacity var(--t-fast);
+  white-space: nowrap;
+}
+.banner-btn:hover { opacity: 0.85; }
+
+/* ── History Stats ─────────────────────────────────────────────── */
+.history-stats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.history-stat {
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 80px;
+}
+.history-stat-value {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-1);
+  line-height: 1;
+}
+.history-stat-label {
+  font-size: 0.72rem;
+  color: var(--text-3);
+}
+
+/* ── Category Badge ────────────────────────────────────────────── */
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bg-4);
+  color: var(--text-3);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+/* ── History Button ────────────────────────────────────────────── */
+.btn-history {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  background: var(--gold-glow);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--r-sm);
+  color: var(--gold);
+  font-size: 0.78rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: background var(--t-fast);
+}
+.btn-history svg { width: 13px; height: 13px; }
+.btn-history:hover { background: rgba(212,168,67,0.2); }
+
+/* Fix actions column visibility */
+.action-btns {
+  display: flex;
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+.data-table td:last-child {
+  white-space: nowrap;
+}
+.data-table {
+  min-width: 600px;
+}
+
+/* Force actions to show */
+#book-list .action-btns,
+#user-list .action-btns {
+  display: flex !important;
+  gap: 4px !important;
+  align-items: center !important;
+}
+.data-table th:last-child,
+.data-table td:last-child {
+  min-width: 180px !important;
+}
