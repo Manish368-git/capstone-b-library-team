@@ -496,8 +496,58 @@ function renderUsers(users) {
         </div>
       </td>
       <td style="color:var(--text-3);font-size:0.84rem">${escHtml(user.email)}</td>
-      <td style="font-family:monospace;font-size:0.78rem;color:var(--text-4)">#${user.id}</td>`;
+      <td style="font-family:monospace;font-size:0.78rem;color:var(--text-4)">#${user.id}</td>
+      <td>
+        <div class="action-btns">
+          <button class="btn-history" data-id="${user.id}" data-name="${escHtml(user.name)}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            History
+          </button>
+          <button class="btn-edit" data-id="${user.id}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit
+          </button>
+          <button class="btn-delete" data-id="${user.id}" data-name="${escHtml(user.name)}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            Delete
+          </button>
+        </div>
+      </td>`;
     tbody.appendChild(tr);
+  });
+
+  document.querySelectorAll('#user-list .btn-history').forEach(btn => {
+    btn.addEventListener('click', () => openMemberHistory(parseInt(btn.dataset.id), btn.dataset.name));
+  });
+
+  document.querySelectorAll('#user-list .btn-edit').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const user = allUsers.find(u => u.id === parseInt(btn.dataset.id));
+      if (user) openEditUserModal(user);
+    });
+  });
+
+  document.querySelectorAll('#user-list .btn-delete').forEach(btn => {
+    btn.addEventListener('click', () => {
+      openDeleteModal(`Delete "${btn.dataset.name}"?`, 'Members with active loans cannot be deleted.', async () => {
+        setLoading(true);
+        try {
+          const res = await fetch(`${API}/users/${btn.dataset.id}`, { method: 'DELETE' });
+          if (!res.ok) {
+            const data = await res.json();
+            showToast('Error', data.error || 'Failed to delete.', 'error');
+            return;
+          }
+          showToast('Deleted', `"${btn.dataset.name}" removed.`, 'info');
+          logActivity(`Deleted member: "${btn.dataset.name}"`, '#f76e6e');
+          await loadUsers();
+        } catch {
+          showToast('Error', 'Failed to delete member.', 'error');
+        } finally {
+          setLoading(false);
+        }
+      });
+    });
   });
 }
 
