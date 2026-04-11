@@ -785,3 +785,39 @@ svg { display:block; flex-shrink:0; }
 .data-table td:last-child {
   min-width: 180px !important;
 }
+
+/* Fix password button visibility */
+.btn-change-password {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 6px 12px !important;
+  background: var(--bg-3) !important;
+  border: 1px solid var(--border-gold) !important;
+  border-radius: var(--r-md) !important;
+  font-size: 0.78rem !important;
+  font-weight: 500 !important;
+  font-family: var(--font-body) !important;
+  color: var(--gold) !important;
+  cursor: pointer !important;
+}
+
+/* Fix topbar right spacing */
+.topbar-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Fix password button icon size */
+.btn-change-password svg {
+  width: 14px !important;
+  height: 14px !important;
+  flex-shrink: 0 !important;
+}
+.btn-change-password {
+  font-size: 0.78rem !important;
+  padding: 6px 10px !important;
+  white-space: nowrap !important;
+}

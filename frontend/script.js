@@ -950,3 +950,75 @@ document.getElementById('history-modal').addEventListener('click', e => {
     document.getElementById('history-modal').classList.add('hidden');
   }
 });
+
+/* ============================================================
+   CHANGE PASSWORD
+   ============================================================ */
+document.getElementById('btn-change-password').addEventListener('click', () => {
+  document.getElementById('change-password-form').reset();
+  clearErrors('err-old-password', 'err-new-password', 'err-confirm-password');
+  document.getElementById('change-password-modal').classList.remove('hidden');
+});
+
+document.getElementById('change-password-cancel').addEventListener('click', () => {
+  document.getElementById('change-password-modal').classList.add('hidden');
+});
+
+document.getElementById('change-password-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('change-password-modal')) {
+    document.getElementById('change-password-modal').classList.add('hidden');
+  }
+});
+
+document.getElementById('change-password-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const oldEl     = document.getElementById('old-password');
+  const newEl     = document.getElementById('new-password');
+  const confirmEl = document.getElementById('confirm-password');
+  clearErrors('err-old-password', 'err-new-password', 'err-confirm-password');
+
+  let valid = true;
+  if (!oldEl.value.trim())
+    valid = setFieldError(oldEl, 'err-old-password', 'Current password is required.') && valid;
+  if (!newEl.value.trim() || newEl.value.length < 6)
+    valid = setFieldError(newEl, 'err-new-password', 'New password must be at least 6 characters.') && valid;
+  if (newEl.value !== confirmEl.value)
+    valid = setFieldError(confirmEl, 'err-confirm-password', 'Passwords do not match.') && valid;
+  if (!valid) return;
+
+  setLoading(true);
+  try {
+    const res = await fetch(`${API}/auth/change-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getToken()}`
+      },
+      body: JSON.stringify({
+        old_password: oldEl.value.trim(),
+        new_password: newEl.value.trim()
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setFieldError(oldEl, 'err-old-password', data.error || 'Failed to change password.');
+      return;
+    }
+
+    showToast('Password Changed', 'Your password has been updated successfully!', 'success');
+    document.getElementById('change-password-modal').classList.add('hidden');
+    document.getElementById('change-password-form').reset();
+
+  } catch {
+    showToast('Error', 'Failed to change password.', 'error');
+  } finally {
+    setLoading(false);
+  }
+});
+
+function togglePw(id) {
+  const input = document.getElementById(id);
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
